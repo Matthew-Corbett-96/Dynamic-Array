@@ -1,9 +1,9 @@
-#include "DynamicArray.h"
+#include "Dynamic_Array.h"
 #include <cstring>
-#include <iostream> 
+#include <iostream>
 
 // Constructors-------------------------------------------------------
-DynamicArray::DynamicArray() //default 
+DynamicArray::DynamicArray() //default
     : m_length(0), m_capacity(0), m_scaling_factor(2.0), m_data(nullptr)
 {
 }
@@ -11,15 +11,15 @@ DynamicArray::DynamicArray() //default
 DynamicArray::DynamicArray(double scaling_factor, unsigned int capacity) //scaling factor & capacity
     : m_length(0), m_capacity(capacity), m_scaling_factor(scaling_factor)
 {
-    // create memory on the heap 
+    // create memory on the heap
     m_data = new int[m_capacity];
 }
 
-DynamicArray::DynamicArray(double scaling_factor, unsigned int length, int default_value) //scaling factor, length, & a value to fill all spaces 
+DynamicArray::DynamicArray(double scaling_factor, unsigned int length, int default_value) //scaling factor, length, & a value to fill all spaces
     : m_length(length), m_capacity(length), m_scaling_factor(scaling_factor)
 {
 
-    // create memory on the heap 
+    // create memory on the heap
     m_data = new int[m_capacity];
 
     //go through array and assign default values
@@ -32,7 +32,7 @@ DynamicArray::DynamicArray(double scaling_factor, unsigned int length, int defau
 DynamicArray::DynamicArray(const DynamicArray& other)
 {
     // use the assignment operator
-    (*this) = other; 
+    (*this) = other;
 }
 
 DynamicArray::~DynamicArray()
@@ -77,7 +77,7 @@ std::string DynamicArray::toString()
     return str;
 }
 
-bool DynamicArray::findFirstOf(int value, unsigned int *index) 
+bool DynamicArray::findFirstOf(int value, unsigned int *index)
 {
 
     // assign variable to false
@@ -102,7 +102,7 @@ bool DynamicArray::findLastOf(int value, unsigned int *index)
 
     // assign variable to false
     bool found = false;
-    
+
     // search the array for the value from reverse
     for(unsigned int i = m_length - 1; i >= 0; i--)
     {
@@ -117,30 +117,30 @@ bool DynamicArray::findLastOf(int value, unsigned int *index)
     return found;
 }
 
-void DynamicArray::append(int value) 
+void DynamicArray::append(int value)
 {
     // if we have no data yet --> place in value at index 0
     if(m_data == nullptr)
     {
-        // need to create ints on the heap 
+        // need to create ints on the heap
         m_data = new int[1];
         m_capacity = 1;
 
         // assign value to first index
         m_data[0] = value;
-        
+
         // increase length
         m_length = 1;
         return;
     }
-    // if array is not full --> add to end 
+    // if array is not full --> add to end
     if(m_length != m_capacity)
     {
         m_data[m_length] = value;
         m_length++;
         return;
-    } 
-    else 
+    }
+    else
     {
         // make new array
         int size = m_capacity * m_scaling_factor;
@@ -160,7 +160,7 @@ void DynamicArray::append(int value)
         return;
     }
 
-    
+
 }
 
 void DynamicArray::prepend(int value)
@@ -309,6 +309,6 @@ DynamicArray& DynamicArray::operator=(const DynamicArray &other)
     m_data = new int[m_capacity];
     std::memcpy(m_data, other.m_data, sizeof(int) * m_length);
     // this allows statements such as (a = b = c) assuming a, b, and c are all the DynamicArray type
-    return (*this); 
+    return (*this);
 }
 

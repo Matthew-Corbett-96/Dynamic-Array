@@ -310,5 +310,6 @@ DynamicArray& DynamicArray::operator=(const DynamicArray &other)
     std::memcpy(m_data, other.m_data, sizeof(int) * m_length);
     // this allows statements such as (a = b = c) assuming a, b, and c are all the DynamicArray type
     return (*this);
-}
 
+
+}

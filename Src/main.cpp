@@ -21,11 +21,11 @@ int main()
     array.prepend("Matthew");
     print_array(array);
 
-    array.prepend("Corbett");
+    array.push_back("Corbett");
     print_array(array);
 
-    array.prepend("!!!!!");
-    print_array(array);
+    /* array.prepend("!!!!!"); */
+    /* print_array(array); */
 
     /* print_array(array); */
 

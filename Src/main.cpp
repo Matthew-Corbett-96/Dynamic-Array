@@ -5,7 +5,7 @@
 template <class T>
 void print_array(const DynamicArray<T>& array)
 {
-    for (size_t i = 0; i < array.getLength(); i++)
+    for (size_t i = 0; i < array.length(); i++)
         std::cout << array[i] << '\n';
     std::cout << "----------------------------------\n";
 }
@@ -13,14 +13,17 @@ void print_array(const DynamicArray<T>& array)
 /* Main Function */
 int main()
 {
-
     DynamicArray<int> array;
     array.push_back(1);
+    print_array(array);
     array.push_back(2);
+    print_array(array);
     array.push_back(3);
+    print_array(array);
     array.push_back(4);
+    print_array(array);
     array.push_back(5);
-    array.push_back(6);
+    print_array(array);
 
     print_array(array);
     return 0;

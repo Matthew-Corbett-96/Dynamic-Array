@@ -8,33 +8,34 @@
 
 #include <cstddef>
 #include <stdexcept>
+#include <iostream>
 
 template <typename T>
 class DynamicArray
 {
     private:
-        // the number of items currently in the array
-        size_t m_length = 0;
-        // the number of available spaces in the array
-        size_t m_capacity = 2;
-        // the scaling factor when resizing the array (always > 1)
-        double m_scaling_factor = 1.5f;
-        // pointer to the array of integers
-        T* m_data = nullptr;
+        size_t m_length = 0; // number of items currently in the array
+        size_t m_capacity = 0; // number of available spaces in the array
+        double m_scaling_factor = 1.5f; // the scaling factor (always > 1)
+        T* m_data = nullptr; // pointer to the data
 
         void Realloc(size_t new_capacity)
         {
-            if (m_length > new_capacity)
+            // Return if pointing to null, not the Reallocs job to instantiate new data heaps
+            if (m_data == nullptr)
+                return;
+            // If new capacity is less than current length --> assign length to same size
+            // allow for shrinking array
+            if (new_capacity < m_length)
                 m_length = new_capacity;
-
             // make new array
-            T* temp = new T[new_capacity];
+            T* new_array = new T[new_capacity];
             //Move data into array
             for (size_t i = 0; i < m_length; i++)
-                temp[i] = std::move(m_data[i]);
-
-            delete m_data;
-            m_data = temp;
+                new_array[i] = std::move(m_data[i]);
+            // delete the old and replace with new
+            delete[] m_data;
+            m_data = new_array;
             m_capacity = new_capacity;
         }
     public:
@@ -43,50 +44,59 @@ class DynamicArray
 
         // default constructor with a scaling factor, creates an array with capacity = capacity
         DynamicArray(double scaling_factor, size_t capacity)
-            : m_capacity(capacity), m_scaling_factor(scaling_factor) { m_data = new T[m_capacity]; }
+            : m_capacity(capacity), m_scaling_factor(scaling_factor)
+        { m_data = new T[m_capacity]; }
 
         // copy constructor
-        DynamicArray(const DynamicArray& other) { (*this) = other; }
+        DynamicArray(const DynamicArray& other)
+        : m_length(other.m_length), m_capacity(other.m_capacity), m_scaling_factor(other.m_scaling_factor)
+        {
+            for (size_t index = 0; index < other.m_length; index++)
+                m_data[index] = other[index];
+            std::cout << "Copied\n";
+        }
 
 /* Todo: Move constructor */
+        /* DynamicArray(DynamicArray&& temp) */
+
 
         // default destructor, free memory of the array here
         ~DynamicArray() { delete[] m_data; }
 
-
         // get the number of elements in the array
-        const size_t& getLength() const { return m_length; }
+        const size_t& length() const { return m_length; }
 
         // get the capacity of the array
-        const size_t& getCapacity() const { return m_capacity; }
+        const size_t& capacity() const { return m_capacity; }
 
         // get scaling factor Needed by GUI
-        const double& getScalingFactor() const { return m_scaling_factor; }
+        const double& scaling_factor() const { return m_scaling_factor; }
 
         // set the scaling factor of the array
-        void setScalingFactor(double value) { m_scaling_factor = value; }
-
-        void setScalingFactor(double&& value) { m_scaling_factor = std::move(value); }
+        void set_scaling_factor(double value) { m_scaling_factor = value; }
+        void set_scaling_factor(double&& value) { m_scaling_factor = std::move(value); }
 
         // convert the vector into a printable string
         /* std::string toString(); */
 
         // find the first occurrence of "value" in the array. Return false if the value is not found
-        bool findFirstOf(T value, size_t* index);
+        /* bool findFirstOf(T value, size_t* index); */
 
         // find the last occurrence of "value" in the array. Return false if the value is not found
-        bool findLastOf(T value, size_t* index);
+        /* bool findLastOf(T value, size_t* index); */
 
         // add a value to the end of the array (resize if necessary)
         void push_back(const T& value)
         {
+            std::cout << "push_back normal\n";
+
             // if we have no data yet --> place in value at index 0
             if(m_data == nullptr)
             {
-                // need to create ints on the heap
+                // need to create on the heap
                 m_data = new T[2];
                 m_capacity = 2;
-                m_length = 2;
+                m_length = 1;
 
                 // assign value to first index
                 m_data[0] = value;
@@ -108,13 +118,14 @@ class DynamicArray
         // Rvalue Ref
         void push_back(T&& value)
         {
+            std::cout << "push_back mover";
             // if we have no data yet --> place in value at index 0
             if(m_data == nullptr)
             {
                 // need to create ints on the heap
                 m_data = new T[2];
                 m_capacity = 2;
-                m_length = 2;
+                m_length = 1;
 
                 // assign value to first index
                 m_data[0] = std::move(value);
@@ -141,7 +152,7 @@ class DynamicArray
                 // need to create ints on the heap
                 m_data = new T[2];
                 m_capacity = 2;
-                m_length = 2;
+                m_length = 1;
                 // assign value to first index
                 m_data[0] = value;
                 return;
@@ -193,7 +204,7 @@ class DynamicArray
                 // need to create on the heap
                 m_data = new T[2];
                 m_capacity = 2;
-                m_length = 2;
+                m_length = 1;
                 // assign value to first index
                 m_data[0] = std::move(value);
                 return;
@@ -267,7 +278,7 @@ class DynamicArray
                 T* temp = new T[m_capacity];
                 //copy data into array
                 for (size_t i = 0; i <= m_capacity; i++)
-                    temp[i] = m_data[i + 1];
+                    temp[i] = std::move(m_data[i + 1]);
                 // delete old array
                 delete[] m_data;
                 m_data = temp;
@@ -308,14 +319,14 @@ class DynamicArray
         }
 
         // assignment operator
-        /* DynamicArray& operator=(const DynamicArray& other) */
-        /* { */
-        /*     m_length = other.m_length; */
-        /*     m_capacity = other.m_capacity; */
-        /*     m_scaling_factor = other.m_scaling_factor; */
-        /*     m_data = new T[m_capacity]; */
-        /*     std::memcpy(m_data, other.m_data, sizeof(T) * m_length); */
-        /*     // this allows statements such as (a = b = c) assuming a, b, and c are all the DynamicArray type */
-        /*     return (*this); */
-        /* } */
+        DynamicArray& operator=(const DynamicArray& other)
+        {
+            m_length = other.m_length;
+            m_capacity = other.m_capacity;
+            m_scaling_factor = other.m_scaling_factor;
+            m_data = new T[m_capacity];
+            memcpy(m_data, other.m_data, sizeof(T) * m_length);
+            // this allows statements such as (a = b = c) assuming a, b, and c are all the DynamicArray type
+            return (*this);
+        }
 };

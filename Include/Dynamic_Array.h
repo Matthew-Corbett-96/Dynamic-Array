@@ -94,12 +94,12 @@ class DynamicArray
             if(m_data == nullptr)
             {
                 // need to create on the heap
-                m_data = new T[2];
                 m_capacity = 2;
-                m_length = 1;
+                m_data = new T[m_capacity];
 
                 // assign value to first index
                 m_data[0] = value;
+                m_length = 1;
                 return;
             }
             // if array is not full --> add to end
@@ -109,8 +109,9 @@ class DynamicArray
                 return;
             }
             // Call Realloc and grow array
-            Realloc(m_length * m_scaling_factor);
-            m_data[m_length++] = value;
+            Realloc(m_capacity * m_scaling_factor);
+            m_data[m_length] = value;
+            m_length++;
             return;
         }
 
@@ -122,24 +123,26 @@ class DynamicArray
             // if we have no data yet --> place in value at index 0
             if(m_data == nullptr)
             {
-                // need to create ints on the heap
-                m_data = new T[2];
+                // need to create on the heap
                 m_capacity = 2;
-                m_length = 1;
+                m_data = new T[m_capacity];
 
                 // assign value to first index
                 m_data[0] = std::move(value);
+                m_length = 1;
                 return;
             }
             // if array is not full --> add to end
             if(m_length != m_capacity)
             {
-                m_data[m_length++] = std::move(value);
+                m_data[m_length] = std::move(value);
+                m_length++;
                 return;
             }
             // Call Realloc and grow array
             Realloc(m_length * m_scaling_factor);
-            m_data[m_length++] = std::move(value);
+            m_data[m_length] = std::move(value);
+            m_length++;
             return;
         }
 
@@ -179,7 +182,8 @@ class DynamicArray
             if (m_capacity == m_length)
             {
                 // make new array
-                T* temp = new T[m_capacity * m_scaling_factor];
+                size_t new_capacity = m_capacity * m_scaling_factor;
+                T* temp = new T[new_capacity];
                 //copy data into array
                 // i + 1 --> so index 0 is open to add new value
                 for (size_t i = 0; i < m_capacity; i++)
@@ -230,7 +234,8 @@ class DynamicArray
             if (m_capacity == m_length)
             {
                 // make new array
-                T* temp = new T[m_capacity * m_scaling_factor];
+                size_t new_capacity = m_capacity * m_scaling_factor;
+                T* temp = new T[new_capacity];
                 //copy data into array
                 // i + 1 --> so index 0 is open to add new value
                 for (size_t i = 0; i < m_capacity; i++)

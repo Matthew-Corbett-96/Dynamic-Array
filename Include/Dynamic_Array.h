@@ -7,6 +7,7 @@
  */
 
 #include <cstddef>
+#include <cstdio>
 #include <stdexcept>
 #include <iostream>
 
@@ -47,6 +48,11 @@ class DynamicArray
             : m_capacity(capacity), m_scaling_factor(scaling_factor)
         { m_data = new T[m_capacity]; }
 
+        // Constructor with Rvalues
+        DynamicArray( double&& scaling_factor, size_t&& capacity)
+            :m_capacity(std::move(capacity)), m_scaling_factor(std::move(scaling_factor))
+        { m_data = new T[m_capacity]; }
+
         // copy constructor
         DynamicArray(const DynamicArray& other)
         : m_length(other.m_length), m_capacity(other.m_capacity), m_scaling_factor(other.m_scaling_factor)
@@ -56,8 +62,20 @@ class DynamicArray
             std::cout << "Copied\n";
         }
 
-/* Todo: Move constructor */
-        /* DynamicArray(DynamicArray&& temp) */
+        // Move Constructor
+        DynamicArray(DynamicArray&& other) noexcept
+        {
+            printf("Moved!\n");
+            // move values into new object
+            m_length = other.m_length;
+            m_capacity = other.m_capacity;
+            m_scaling_factor = other.m_scaling_factor;
+            m_data = other.m_data;
+            // reset old object
+            other.m_length = 0;
+            other.m_capacity = 0;
+            other.m_data = nullptr;
+        }
 
 
         // default destructor, free memory of the array here
@@ -333,5 +351,26 @@ class DynamicArray
             memcpy(m_data, other.m_data, sizeof(T) * m_length);
             // this allows statements such as (a = b = c) assuming a, b, and c are all the DynamicArray type
             return (*this);
+        }
+
+        // Move assignment operator
+        DynamicArray& operator=(DynamicArray&& other) noexcept
+        {
+            if (this != &other)
+            {
+                printf("Moved!\n");
+                // Delete old data in object
+                delete[] m_data;
+                // move values into new object
+                m_length = other.m_length;
+                m_capacity = other.m_capacity;
+                m_scaling_factor = other.m_scaling_factor;
+                m_data = other.m_data;
+                // reset old object
+                other.m_length = 0;
+                other.m_capacity = 0;
+                other.m_data = nullptr;
+            }
+            return *this;
         }
 };

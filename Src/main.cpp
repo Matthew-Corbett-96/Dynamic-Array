@@ -17,19 +17,11 @@ void print_array(const DynamicArray<T>& array)
 int main()
 {
     DynamicArray<std::string> array;
-
     array.prepend("Matthew");
     print_array(array);
-
     array.push_back("Corbett");
     print_array(array);
 
-    /* array.prepend("!!!!!"); */
-    /* print_array(array); */
-
-    /* print_array(array); */
-
-    /* print_array(array); */
 
     return 0;
 }

@@ -1,3 +1,4 @@
+// Use this file for testing
 #include <iostream>
 #include <string>
 #include "../Include/Dynamic_Array.h"
@@ -16,12 +17,10 @@ void print_array(const DynamicArray<T>& array)
 /* Main Function */
 int main()
 {
-    DynamicArray<std::string> array;
-    array.prepend("Matthew");
-    print_array(array);
-    array.push_back("Corbett");
-    print_array(array);
-
-
+//     DynamicArray<std::string> array;
+//     array.prepend("Matthew");
+//     print_array(array);
+//     array.push_back("Corbett");
+//     print_array(array);
     return 0;
 }
